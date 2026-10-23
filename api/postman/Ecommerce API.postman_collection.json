@@ -1,0 +1,2683 @@
+{
+  "info": {
+    "_postman_id": "d148946d-6b61-4829-be42-9f350c86c479",
+    "name": "Ecommerce API",
+    "description": "Sesión 6. Ejecutar en orden (Categories, Products, Users). Usa {{baseUrl}} del entorno Ecommerce Local. Los datos son ficticios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "59158626",
+    "_collection_link": "https://go.postman.co/collection/59158626-d148946d-6b61-4829-be42-9f350c86c479?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "1 · POST Crear categoría (correcta)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"categorySlug\", \"peliculas-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Categoría creada correctamente\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data).to.have.property(\"_id\");",
+                  "    pm.expect(res.data.active).to.eql(true);",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"categoryId\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Objetos de películas\",\n  \"slug\": \"{{categorySlug}}\",\n  \"description\": \"Objetos mágicos de películas famosas\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear categoría 2",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"categorySlug2\", \"videojuegos-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Categoría creada correctamente\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data).to.have.property(\"_id\");",
+                  "    pm.expect(res.data.active).to.eql(true);",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"categoryId2\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Objetos de videojuegos\",\n  \"slug\": \"{{categorySlug2}}\",\n  \"description\": \"Objetos mágicos de videojuegos\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2 · POST Categoría sin nombre (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"name\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"slug\": \"sin-nombre\",\n  \"description\": \"Categoría sin nombre\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3 · POST Slug duplicado (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error DUPLICATE_VALUE\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"DUPLICATE_VALUE\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"slug\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría duplicada\",\n  \"slug\": \"{{categorySlug}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar categorías",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene data y pagination\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
+                  "    pm.expect(res.pagination).to.have.all.keys(\"page\", \"limit\", \"total\", \"totalPages\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Categorías con filtros, orden y paginación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene data y pagination\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
+                  "    pm.expect(res.pagination).to.have.all.keys(\"page\", \"limit\", \"total\", \"totalPages\");",
+                  "});",
+                  "",
+                  "pm.test(\"Respeta limit y filtro active\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.pagination.limit).to.eql(5);",
+                  "    res.data.forEach(c => pm.expect(c.active).to.eql(true));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories?active=true&name=video&sort=name&page=1&limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "true"
+                },
+                {
+                  "key": "name",
+                  "value": "video"
+                },
+                {
+                  "key": "sort",
+                  "value": "name"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Categorías ordenadas por name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories?sort=name",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "name"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Ordenación no permitida (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_QUERY\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_QUERY\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"sort\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories?sort=password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "password"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Paginación incorrecta page=0 (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_QUERY\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_QUERY\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"page\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories?page=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Categoría por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Devuelve la categoría pedida\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data._id).to.eql(pm.collectionVariables.get(\"categoryId\"));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Categoría con ID inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_ID\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_ID\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/abc123",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "abc123"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Categoría inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error CATEGORY_NOT_FOUND\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"CATEGORY_NOT_FOUND\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "000000000000000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Modificar categoría",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Descripción modificada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data.description).to.eql(\"Descripción modificada desde Postman\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Descripción modificada desde Postman\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear categoría temporal (para borrarla)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"categorySlugTmp\", \"temporal-\" + Date.now());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"categoryTmpId\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Categoría temporal\",\n  \"slug\": \"{{categorySlugTmp}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Eliminar categoría temporal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryTmpId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "{{categoryTmpId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "POST Crear producto 1 (Películas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Producto creado con la categoría poblada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.category).to.have.property(\"name\");",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"productId\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Varita de Saúco\",\n  \"description\": \"Varita mágica de gran poder, réplica de colección\",\n  \"price\": 79.9,\n  \"category\": \"{{categoryId}}\",\n  \"stock\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear producto 2 (Películas)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Producto creado con la categoría poblada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.category).to.have.property(\"name\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anillo Único\",\n  \"description\": \"Anillo dorado con inscripción élfica\",\n  \"price\": 129,\n  \"category\": \"{{categoryId}}\",\n  \"stock\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear producto 3 (Videojuegos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Producto creado con la categoría poblada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.category).to.have.property(\"name\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Espada Maestra\",\n  \"description\": \"Espada legendaria que derrota al mal\",\n  \"price\": 149.5,\n  \"category\": \"{{categoryId2}}\",\n  \"stock\": 7\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear producto 4 (Videojuegos)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Producto creado con la categoría poblada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.category).to.have.property(\"name\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Poción de vida\",\n  \"description\": \"Poción roja que recupera toda la salud\",\n  \"price\": 19.9,\n  \"category\": \"{{categoryId2}}\",\n  \"stock\": 40\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Producto sin categoría (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"category\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sin categoría\",\n  \"description\": \"Prueba\",\n  \"price\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Producto con categoría inexistente (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"category\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Cat inexistente\",\n  \"description\": \"Prueba\",\n  \"price\": 10,\n  \"category\": \"000000000000000000000000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Producto con precio negativo (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"price\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Precio malo\",\n  \"description\": \"Prueba\",\n  \"price\": -5,\n  \"category\": \"{{categoryId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar productos",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Devuelve un array de productos\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Producto por ID (populate)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"La categoría viene poblada\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data.category).to.have.property(\"name\");",
+                  "    pm.expect(res.data.category).to.have.property(\"slug\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Producto inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error PRODUCT_NOT_FOUND\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"PRODUCT_NOT_FOUND\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "000000000000000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Producto con ID inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_ID\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_ID\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/abc123",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "abc123"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Modificar producto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Precio y stock modificados\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data.price).to.eql(49.9);",
+                  "    pm.expect(res.data.stock).to.eql(30);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price\": 49.9,\n  \"stock\": 30\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Categoría con productos (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error CATEGORY_IN_USE\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"CATEGORY_IN_USE\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear producto temporal (para borrarlo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"productTmpId\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Producto temporal\",\n  \"description\": \"Se borra al momento\",\n  \"price\": 1,\n  \"category\": \"{{categoryId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Eliminar producto temporal",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 204\", () => {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/products/{{productTmpId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "{{productTmpId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "4 · POST Crear usuario (correcto)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"userEmail\", \"anna.\" + Date.now() + \"@example.com\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Usuario creado con role client y active true\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.role).to.eql(\"client\");",
+                  "    pm.expect(res.data.active).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"userId\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anna Puig\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear usuario 2",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"userEmail2\", \"marc.\" + Date.now() + \"@example.com\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Usuario creado con role client y active true\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.role).to.eql(\"client\");",
+                  "    pm.expect(res.data.active).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"userId2\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Marc Soler\",\n  \"email\": \"{{userEmail2}}\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Crear usuario 3",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set(\"userEmail3\", \"laia.\" + Date.now() + \"@example.com\");"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Usuario creado con role client y active true\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(true);",
+                  "    pm.expect(res.data.role).to.eql(\"client\");",
+                  "    pm.expect(res.data.active).to.eql(true);",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "const saved = pm.response.json();",
+                  "pm.collectionVariables.set(\"userId3\", saved.data._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Laia Vila\",\n  \"email\": \"{{userEmail3}}\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5 · POST Email duplicado (409)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error DUPLICATE_VALUE\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"DUPLICATE_VALUE\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"email\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anna Repetida\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Usuario sin nombre (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"name\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"sinnombre@example.com\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Email con formato incorrecto (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"email\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Email Malo\",\n  \"email\": \"esto-no-es-un-email\",\n  \"password\": \"ContrasenyaFicticia123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Contraseña corta (422)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 422\", () => {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error VALIDATION_ERROR\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"VALIDATION_ERROR\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"password\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pass Corta\",\n  \"email\": \"corta@example.com\",\n  \"password\": \"corta\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST Usuario enviando role admin (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error FIELDS_NOT_ALLOWED\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"FIELDS_NOT_ALLOWED\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"role\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Intruso\",\n  \"email\": \"intruso@example.com\",\n  \"password\": \"ContrasenyaFicticia123\",\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Listar usuarios",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {\n    pm.response.to.have.status(200);\n});\n\npm.test(\"Response is JSON\", () => {\n    pm.response.to.be.json;\n});\n\npm.test(\"Tiene data y pagination\", () => {\n    const res = pm.response.json();\n    pm.expect(res.data).to.be.an(\"array\");\n    pm.expect(res.pagination).to.have.all.keys(\"page\", \"limit\", \"total\", \"totalPages\");\n});\n\npm.test(\"No exposa passwordHash\", () => {\n    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuarios con filtros y orden",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene data y pagination\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
+                  "    pm.expect(res.pagination).to.have.all.keys(\"page\", \"limit\", \"total\", \"totalPages\");",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?name=anna&sort=-createdAt&page=1&limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "anna"
+                },
+                {
+                  "key": "sort",
+                  "value": "-createdAt"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuarios paginación page=2&limit=1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Tiene data y pagination\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data).to.be.an(\"array\");",
+                  "    pm.expect(res.pagination).to.have.all.keys(\"page\", \"limit\", \"total\", \"totalPages\");",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "pm.test(\"Está en la página 2\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.pagination.page).to.eql(2);",
+                  "    pm.expect(res.data.length).to.be.at.most(1);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=2&limit=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuarios con limit inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_QUERY\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_QUERY\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"limit\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?limit=abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "abc"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuario por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuario inexistente (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error USER_NOT_FOUND\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"USER_NOT_FOUND\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/000000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "000000000000000000000000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuario con ID inválido (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error INVALID_ID\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"INVALID_ID\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/123",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "123"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Modificar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "pm.test(\"Nombre modificado\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data.name).to.eql(\"Anna Puig Modificada\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Anna Puig Modificada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Modificar role (campo no permitido, 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error FIELDS_NOT_ALLOWED\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"FIELDS_NOT_ALLOWED\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"role\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Modificar passwordHash (campo no permitido, 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"Error FIELDS_NOT_ALLOWED\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.success).to.eql(false);",
+                  "    pm.expect(res.error.code).to.eql(\"FIELDS_NOT_ALLOWED\");",
+                  "    pm.expect(res.error.details.map(d => d.field)).to.include(\"passwordHash\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"passwordHash\": \"hash-falso\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Desactivar usuario (baja lógica)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "pm.test(\"Usuario con active false\", () => {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.data.active).to.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{userId2}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{userId2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET Usuarios activos (active=true)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response is JSON\", () => {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "pm.test(\"No exposa passwordHash\", () => {",
+                  "    pm.expect(pm.response.text()).to.not.include(\"passwordHash\");",
+                  "});",
+                  "",
+                  "pm.test(\"Todos activos\", () => {",
+                  "    const res = pm.response.json();",
+                  "    res.data.forEach(u => pm.expect(u.active).to.eql(true));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?active=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "active",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "categorySlug",
+      "value": ""
+    },
+    {
+      "key": "categoryId",
+      "value": ""
+    },
+    {
+      "key": "categorySlug2",
+      "value": ""
+    },
+    {
+      "key": "categoryId2",
+      "value": ""
+    },
+    {
+      "key": "categorySlugTmp",
+      "value": ""
+    },
+    {
+      "key": "categoryTmpId",
+      "value": ""
+    },
+    {
+      "key": "productId",
+      "value": ""
+    },
+    {
+      "key": "productTmpId",
+      "value": ""
+    },
+    {
+      "key": "userEmail",
+      "value": ""
+    },
+    {
+      "key": "userEmail2",
+      "value": ""
+    },
+    {
+      "key": "userEmail3",
+      "value": ""
+    },
+    {
+      "key": "userId",
+      "value": ""
+    },
+    {
+      "key": "userId2",
+      "value": ""
+    },
+    {
+      "key": "userId3",
+      "value": ""
+    }
+  ]
+}
