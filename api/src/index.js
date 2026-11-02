@@ -7,6 +7,10 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
     try {
+        if (!process.env.JWT_SECRET) {
+            throw new Error('Falta JWT_SECRET en el .env');
+        }
+
         await connectDB();
 
         app.listen(PORT, () => {
