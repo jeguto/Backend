@@ -10,6 +10,9 @@ const startServer = async () => {
         if (!process.env.JWT_SECRET) {
             throw new Error('Falta JWT_SECRET en el .env');
         }
+        if (!process.env.JWT_REFRESH_SECRET) {
+            throw new Error('Falta JWT_REFRESH_SECRET en el .env');
+        }
 
         await connectDB();
 

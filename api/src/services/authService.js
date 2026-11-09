@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const AppError = require('../utils/AppError');
 const { pickAllowed } = require('../utils/helpers');
 const userService = require('./userService');
+const tokenService = require('./tokenService');
 
 const LOGIN_FIELDS = ['email', 'password'];
 
@@ -40,13 +40,9 @@ const login = async (body) => {
         throw new AppError(403, 'USER_DISABLED', 'El usuario está desactivado');
     }
 
-    const token = jwt.sign(
-        { sub: user._id.toString(), role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
-    );
+    const { accessToken, refreshToken } = await tokenService.issueTokens(user);
 
-    return { token, user };
+    return { accessToken, refreshToken, user };
 };
 
 module.exports = { register, login };
